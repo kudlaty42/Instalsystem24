@@ -1,0 +1,16 @@
+# Ustawienie index.php jako domyślnego dokumentu
+DirectoryIndex index.php
+
+# Przekierowanie błędów do strony błędów (opcjonalnie)
+ErrorDocument 404 /index.php
+
+# Włączanie obsługi Pretty URLs (opcja dla frameworków lub ścieżek przyjaznych dla użytkownika)
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.php [L]
+
+# Opcjonalne zabezpieczenie przed bezpośrednim dostępem do pliku .htaccess
+<Files ".htaccess">
+    Require all denied
+</Files>
