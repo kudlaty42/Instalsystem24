@@ -28,6 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 
+<<<<<<< HEAD
 <h1>Sklep Instalacyjny</h1>
 <h2>Produkty:</h2>
 <ul>
@@ -62,3 +63,17 @@ foreach ($products as $product): ?>
 </form>
 </body>
 </html>
+=======
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sklep instalacyjny</title>
+
+    <head>
+        <body>
+            <h1>Sklep instalacyjny</h1>
+</body>
+</html>
+>>>>>>> origin/main
