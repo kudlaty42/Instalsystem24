@@ -1,18 +1,23 @@
 <?php
-require 'db.php'; // Import połączenia do bazy danych
+// Sprawdzenie, czy plik db.php istnieje
+if (!file_exists('db.php')) {
+    echo "<p>Plik konfiguracji bazy danych nie został odnaleziony.</p>";
+    exit();
+}
+require 'db.php';
 
 // Sprawdzenie połączenia z bazą danych
-if (!$conn) {
-    echo "<p>Błąd połączenia z bazą danych. Proszę spróbować ponownie później.</p>";
+if (!isset($conn)) {
+    echo "<p>Nie udało się nawiązać połączenia z bazą danych.</p>";
     exit();
 }
 
 // Pobieranie produktów z bazy
 try {
-    $stmt = $conn->query("SELECT id, name, description, price, category FROM products");
+    $stmt = $conn->query("SELECT id, name, description, price, category FROM products ORDER BY name ASC");
     $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
-    echo "Błąd zapytania: " . $e->getMessage();
+    echo "Błąd zapytania: " . htmlspecialchars($e->getMessage());
     exit();
 }
 ?>
@@ -34,7 +39,7 @@ try {
                 <li>
                     <strong><?php echo htmlspecialchars($product['name']); ?></strong><br>
                     Opis: <?php echo htmlspecialchars($product['description']); ?><br>
-                    Cena: <?php echo number_format($product['price'], 2); ?> PLN<br>
+                    Cena: <?php echo number_format((float)$product['price'], 2); ?> PLN<br>
                     Kategoria: <?php echo htmlspecialchars($product['category']); ?><br>
                 </li>
             <?php endforeach; ?>
