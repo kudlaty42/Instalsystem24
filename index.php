@@ -1,14 +1,21 @@
 <?php
 // Ustawienia połączenia z bazą danych
-$serverName = getenv('DB_SERVER');
-$database = getenv('DB_NAME');
-$username = getenv('DB_USERNAME');
-$password = getenv('DB_PASSWORD');
+$serverName = getenv('DB_SERVER'); // Nazwa serwera
+$database = getenv('DB_NAME');     // Nazwa bazy danych
+$username = getenv('DB_USERNAME'); // Nazwa użytkownika
+$password = getenv('DB_PASSWORD'); // Hasło użytkownika
 
 // Połączenie z bazą danych
 try {
-    $conn = new PDO("sqlsrv:server=$serverName;Database=$database", $username, $password);
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $conn = new PDO(
+        "sqlsrv:server=$serverName;Database=$database",
+        $username,
+        $password,
+        [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, // Tryb raportowania błędów
+            PDO::ATTR_PERSISTENT => true,               // Połączenie trwałe
+        ]
+    );
 } catch (PDOException $e) {
     echo "<p>Nie można połączyć z bazą danych. Szczegóły: " . htmlspecialchars($e->getMessage()) . "</p>";
     exit();
