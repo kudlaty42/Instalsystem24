@@ -1,23 +1,26 @@
 <?php
-// Sprawdzenie, czy plik db.php istnieje
-if (!file_exists('db.php')) {
-    echo "<p>Plik konfiguracji bazy danych nie został odnaleziony.</p>";
-    exit();
-}
-require 'db.php';
+// Ustawienia połączenia z bazą danych
+$serverName = getenv('DB_SERVER');
+$database = getenv('DB_NAME');
+$username = getenv('DB_USERNAME');
+$password = getenv('DB_PASSWORD');
 
-// Sprawdzenie połączenia z bazą danych
-if (!isset($conn)) {
-    echo "<p>Nie udało się nawiązać połączenia z bazą danych.</p>";
-    exit();
-}
-
-// Pobieranie produktów z bazy
+// Połączenie z bazą danych
 try {
-    $stmt = $conn->query("SELECT id, name, description, price, category FROM products ORDER BY name ASC");
+    $conn = new PDO("sqlsrv:server=$serverName;Database=$database", $username, $password);
+    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    echo "<p>Nie można połączyć z bazą danych. Szczegóły: " . htmlspecialchars($e->getMessage()) . "</p>";
+    exit();
+}
+
+// Pobieranie produktów z bazy danych
+$products = [];
+try {
+    $stmt = $conn->query("SELECT id, name, description, price, category FROM products");
     $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
-    echo "Błąd zapytania: " . htmlspecialchars($e->getMessage());
+    echo "<p>Błąd podczas pobierania danych: " . htmlspecialchars($e->getMessage()) . "</p>";
     exit();
 }
 ?>
@@ -32,20 +35,20 @@ try {
 <body>
     <h1>Sklep Instalacyjny</h1>
 
-    <h2>Lista produktów:</h2>
-    <ul>
-        <?php if (!empty($products)): ?>
+    <?php if (!empty($products)): ?>
+        <h2>Lista produktów:</h2>
+        <ul>
             <?php foreach ($products as $product): ?>
                 <li>
                     <strong><?php echo htmlspecialchars($product['name']); ?></strong><br>
                     Opis: <?php echo htmlspecialchars($product['description']); ?><br>
-                    Cena: <?php echo number_format((float)$product['price'], 2); ?> PLN<br>
+                    Cena: <?php echo number_format($product['price'], 2); ?> PLN<br>
                     Kategoria: <?php echo htmlspecialchars($product['category']); ?><br>
                 </li>
             <?php endforeach; ?>
-        <?php else: ?>
-            <li>Brak produktów.</li>
-        <?php endif; ?>
-    </ul>
+        </ul>
+    <?php else: ?>
+        <p>Brak dostępnych produktów.</p>
+    <?php endif; ?>
 </body>
 </html>
